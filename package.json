@@ -59,6 +59,7 @@
     "webpack-dev-server": "^5.2.0"
   },
   "scripts": {
+    "prepare": "npm run build",
     "start": "webpack serve --config webpack.config.mjs --mode=development",
     "checkout-pr": "git fetch origin pull/$PR/head:pr$PR && git checkout pr$PR",
     "start-external": "webpack serve --config webpack.config.mjs --mode=development --host 0.0.0.0",
