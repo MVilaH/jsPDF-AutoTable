@@ -93,17 +93,27 @@ export class Table {
   }
 
   getHeadHeight(columns: Column[]) {
-    return this.head.reduce(
-      (acc, row) => acc + row.getMaxCellHeight(columns),
-      0,
-    )
+    var rowSpan = 1
+    return this.head.reduce((acc, row) => { 
+      if(rowSpan === 1){
+        rowSpan = row.getMaxRowSpan(columns)
+        return acc + row.getMaxCellHeight(columns)
+      }
+      rowSpan--
+      return acc
+    }, 0)
   }
 
   getFootHeight(columns: Column[]) {
-    return this.foot.reduce(
-      (acc, row) => acc + row.getMaxCellHeight(columns),
-      0,
-    )
+    var rowSpan = 1
+    return this.foot.reduce((acc, row) => { 
+      if(rowSpan === 1){
+        rowSpan = row.getMaxRowSpan(columns)
+        return acc + row.getMaxCellHeight(columns)
+      }
+      rowSpan--
+      return acc
+    }, 0)
   }
 
   allRows() {
@@ -189,6 +199,13 @@ export class Row {
   getMaxCellHeight(columns: Column[]) {
     return columns.reduce(
       (acc, column) => Math.max(acc, this.cells[column.index]?.height || 0),
+      0,
+    )
+  }
+
+  getMaxRowSpan(columns: Column[]) {
+    return columns.reduce(
+      (acc, column) => Math.max(acc, this.cells[column.index]?.rowSpan || 0),
       0,
     )
   }
