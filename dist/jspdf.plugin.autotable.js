@@ -1076,10 +1076,26 @@ var Table = /** @class */ (function () {
         this.foot = content.foot;
     }
     Table.prototype.getHeadHeight = function (columns) {
-        return this.head.reduce(function (acc, row) { return acc + row.getMaxCellHeight(columns); }, 0);
+        var rowSpan = 1;
+        return this.head.reduce(function (acc, row) {
+            if (rowSpan === 1) {
+                rowSpan = row.getMaxRowSpan(columns);
+                return acc + row.getMaxCellHeight(columns);
+            }
+            rowSpan--;
+            return acc;
+        }, 0);
     };
     Table.prototype.getFootHeight = function (columns) {
-        return this.foot.reduce(function (acc, row) { return acc + row.getMaxCellHeight(columns); }, 0);
+        var rowSpan = 1;
+        return this.foot.reduce(function (acc, row) {
+            if (rowSpan === 1) {
+                rowSpan = row.getMaxRowSpan(columns);
+                return acc + row.getMaxCellHeight(columns);
+            }
+            rowSpan--;
+            return acc;
+        }, 0);
     };
     Table.prototype.allRows = function () {
         return this.head.concat(this.body).concat(this.foot);
@@ -1143,6 +1159,10 @@ var Row = /** @class */ (function () {
     Row.prototype.getMaxCellHeight = function (columns) {
         var _this = this;
         return columns.reduce(function (acc, column) { var _a; return Math.max(acc, ((_a = _this.cells[column.index]) === null || _a === void 0 ? void 0 : _a.height) || 0); }, 0);
+    };
+    Row.prototype.getMaxRowSpan = function (columns) {
+        var _this = this;
+        return columns.reduce(function (acc, column) { var _a; return Math.max(acc, ((_a = _this.cells[column.index]) === null || _a === void 0 ? void 0 : _a.rowSpan) || 0); }, 0);
     };
     Row.prototype.hasRowSpan = function (columns) {
         var _this = this;
@@ -1977,7 +1997,6 @@ function printFullRow(doc, table, row, isLastRow, startPos, cursor, columns) {
     else if (shouldPrintOnCurrentPage(doc, row, remainingSpace, table)) {
         // The row gets split in two here, each piece in one page
         var remainderRow = modifyRowToFit(row, remainingSpace, table, doc);
-        printRow(doc, table, row, cursor, columns);
         addPage(doc, table, startPos, cursor, columns);
         printFullRow(doc, table, remainderRow, isLastRow, startPos, cursor, columns);
     }

@@ -124,6 +124,7 @@ export declare class Row {
 		[key: string]: Cell;
 	}, spansMultiplePages?: boolean);
 	getMaxCellHeight(columns: Column[]): number;
+	getMaxRowSpan(columns: Column[]): number;
 	hasRowSpan(columns: Column[]): boolean;
 	canEntireRowFit(height: number, columns: Column[]): boolean;
 	getMinimumRowHeight(columns: Column[], doc: DocHandler): number;
